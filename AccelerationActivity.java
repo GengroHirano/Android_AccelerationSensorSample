@@ -20,10 +20,12 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 	float[] rotationMatrix = new float[MATRIX_SIZE] ;
 	float[] outRotation = new float[MATRIX_SIZE] ;
 	float[] I = new float[MATRIX_SIZE] ;
-	
+
 	float[] gravity = new float[3] ;
 	float[] geomagnetic = new float[3] ;
 	float[] attitude = new float[3] ;
+
+	float[] currentGravity = new float[3] ;
 
 	TextView azimuthValue ;
 	TextView pitchValue ;
@@ -74,15 +76,20 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 		default:
 			break;
 		}
-		
+
+		//ローパスフィルターを噛ませる(変化が緩やかーになる奴ね詳しくは後で乗っけよう。それが間違ってたら訂正オナシャス！)
+		currentGravity[0] = (float) (gravity[0] * 0.1 + currentGravity[0] * 0.9) ;
+		currentGravity[1] = (float) (gravity[1] * 0.1 + currentGravity[1] * 0.9) ;
+		currentGravity[2] = (float) (gravity[2] * 0.1 + currentGravity[2] * 0.9) ;
+
 		if( gravity != null && geomagnetic != null ){
-			SensorManager.getRotationMatrix(rotationMatrix, I, gravity, geomagnetic) ;
+			SensorManager.getRotationMatrix(rotationMatrix, I, currentGravity, geomagnetic) ;
 			//なんか調整が必要っぽい
 			SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, outRotation) ;
 			SensorManager.getOrientation(outRotation, attitude) ;
-			
+
 			//式は(int)(attitude[0] * RAD2DEG)と一緒
-//			azimuthValue.setText(Integer.toString( (int)Math.toDegrees(attitude[0]) )) ;//方向
+			//azimuthValue.setText(Integer.toString( (int)Math.toDegrees(attitude[0]) )) ;//方向
 			/**
 			 * もし方位角にしたいなら + 360.0fを付けよう なぜならgetOrientationでかえってくるラジアン？だっけかな
 			 * そいつが-π~πの範囲で入ってるからなんだとさ
