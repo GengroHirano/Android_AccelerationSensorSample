@@ -50,5 +50,19 @@
         android:layout_below="@+id/PitchValue"
         android:layout_toRightOf="@+id/PitchValue"
         android:text="@string/hello_world" />
+    
+    <TextView
+        android:id="@+id/NEWS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+    
+    <TextView 
+        android:layout_above="@+id/NEWS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="↑"/>
 
 </RelativeLayout>

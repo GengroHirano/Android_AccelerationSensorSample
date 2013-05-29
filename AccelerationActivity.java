@@ -30,6 +30,7 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 	TextView azimuthValue ;
 	TextView pitchValue ;
 	TextView rollValue ;
+	TextView news ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 		azimuthValue = (TextView)findViewById(R.id.AzimuthValue) ;
 		pitchValue = (TextView)findViewById(R.id.PitchValue) ;
 		rollValue = (TextView)findViewById(R.id.RollValue) ;
+		news = (TextView)findViewById(R.id.NEWS) ;
 
 		sencManager = (SensorManager)getSystemService(SENSOR_SERVICE) ;
 	}
@@ -102,6 +104,31 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			pitchValue.setText(Integer.toString( (int)Math.toDegrees(attitude[1]) )) ; //飛行機で言う機首の上げ下げ
 			rollValue.setText(Integer.toString( (int)Math.toDegrees(attitude[2]) )) ; //飛行機で言う主翼の先端
 			//詳しく載ってるttp://shitappaprogramer.seesaa.net/article/229118272.html
+
+			if( azimus <= 22.5 || azimus >= 337.5 ){
+				news.setText("北") ;
+			}
+			else if( azimus >= 22.5 && azimus < 67.5 ){
+				news.setText("北東") ;
+			}
+			else if( azimus >= 67.5 && azimus <= 112.5 ){
+				news.setText("東") ;
+			}
+			else if( azimus > 112.5 && azimus < 157.5 ){
+				news.setText("南東") ;
+			}
+			else if( azimus >= 157.5 && azimus <= 202.5 ){
+				news.setText("南") ;
+			}
+			else if( azimus > 202.5 && azimus < 247.5 ){
+				news.setText("南西") ;
+			}
+			else if( azimus >= 247.5 && azimus <= 292.0 ){
+				news.setText("西") ;
+			}
+			else if( azimus > 292.0 && azimus < 337.5 ){
+				news.setText("北西") ;
+			}
 		}
 	}
 
