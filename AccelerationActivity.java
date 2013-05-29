@@ -82,7 +82,16 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			SensorManager.getOrientation(outRotation, attitude) ;
 			
 			//式は(int)(attitude[0] * RAD2DEG)と一緒
-			azimuthValue.setText(Integer.toString( (int)Math.toDegrees(attitude[0]) )) ;//方向
+//			azimuthValue.setText(Integer.toString( (int)Math.toDegrees(attitude[0]) )) ;//方向
+			/**
+			 * もし方位角にしたいなら + 360.0fを付けよう なぜならgetOrientationでかえってくるラジアン？だっけかな
+			 * そいつが-π~πの範囲で入ってるからなんだとさ
+			 **/
+			double azimus = Math.toDegrees(attitude[0]) ;
+			if(azimus < 0){
+				azimus += 360.0f ;
+			}
+			azimuthValue.setText(Integer.toString( (int)azimus )) ;
 			pitchValue.setText(Integer.toString( (int)Math.toDegrees(attitude[1]) )) ; //飛行機で言う機首の上げ下げ
 			rollValue.setText(Integer.toString( (int)Math.toDegrees(attitude[2]) )) ; //飛行機で言う主翼の先端
 			//詳しく載ってるttp://shitappaprogramer.seesaa.net/article/229118272.html
