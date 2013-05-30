@@ -25,7 +25,7 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 	float[] geomagnetic = new float[3] ;
 	float[] attitude = new float[3] ;
 
-	float[] currentGravity = new float[3] ;
+	float[] currentAttitude = new float[3] ;
 
 	TextView azimuthValue ;
 	TextView pitchValue ;
@@ -79,13 +79,8 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			break;
 		}
 
-		//ローパスフィルターを噛ませる(変化が緩やかーになる奴ね詳しくは後で乗っけよう。それが間違ってたら訂正オナシャス！)
-		currentGravity[0] = (float) (gravity[0] * 0.1 + currentGravity[0] * 0.9) ;
-		currentGravity[1] = (float) (gravity[1] * 0.1 + currentGravity[1] * 0.9) ;
-		currentGravity[2] = (float) (gravity[2] * 0.1 + currentGravity[2] * 0.9) ;
-
 		if( gravity != null && geomagnetic != null ){
-			SensorManager.getRotationMatrix(rotationMatrix, I, currentGravity, geomagnetic) ;
+			SensorManager.getRotationMatrix(rotationMatrix, I, gravity, geomagnetic) ;
 			//なんか調整が必要っぽい
 			SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, outRotation) ;
 			SensorManager.getOrientation(outRotation, attitude) ;
@@ -96,37 +91,44 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			 * もし方位角にしたいなら + 360.0fを付けよう なぜならgetOrientationでかえってくるラジアン？だっけかな
 			 * そいつが-π~πの範囲で入ってるからなんだとさ
 			 **/
-			double azimus = Math.toDegrees(attitude[0]) ;
-			if(azimus < 0){
-				azimus += 360.0f ;
+			double azimus = 0.0;
+			if(attitude[0] < 0){
+				azimus = Math.toDegrees(attitude[0]) + 360.0f ;
+			}
+			else{
+				azimus = Math.toDegrees(attitude[0]) ;
 			}
 			azimuthValue.setText(Integer.toString( (int)azimus )) ;
-			pitchValue.setText(Integer.toString( (int)Math.toDegrees(attitude[1]) )) ; //飛行機で言う機首の上げ下げ
-			rollValue.setText(Integer.toString( (int)Math.toDegrees(attitude[2]) )) ; //飛行機で言う主翼の先端
+			//ピッチとロールの表示にはローパスフィルタを噛ませる
+			currentAttitude[1] = (float) (attitude[1] * 0.1 + currentAttitude[1] * 0.9) ;
+			currentAttitude[2] = (float) (attitude[2] * 0.1 + currentAttitude[2] * 0.9) ;
+
+			pitchValue.setText(Integer.toString( (int)Math.toDegrees(currentAttitude[1]) )) ; //飛行機で言う機首の上げ下げ -90~90度まで
+			rollValue.setText(Integer.toString( (int)Math.toDegrees(currentAttitude[2]) )) ; //飛行機で言う主翼の先端 -180~180度まで
 			//詳しく載ってるttp://shitappaprogramer.seesaa.net/article/229118272.html
 
-			if( azimus <= 22.5 || azimus >= 337.5 ){
+			if( azimus >= 338 || azimus <= 22 ){
 				news.setText("北") ;
 			}
-			else if( azimus >= 22.5 && azimus < 67.5 ){
+			else if( azimus >= 23 && azimus <= 67 ){
 				news.setText("北東") ;
 			}
-			else if( azimus >= 67.5 && azimus <= 112.5 ){
+			else if( azimus >= 68 && azimus <= 112 ){
 				news.setText("東") ;
 			}
-			else if( azimus > 112.5 && azimus < 157.5 ){
+			else if( azimus >= 113 && azimus <= 157 ){
 				news.setText("南東") ;
 			}
-			else if( azimus >= 157.5 && azimus <= 202.5 ){
+			else if( azimus >= 158 && azimus <= 202 ){
 				news.setText("南") ;
 			}
-			else if( azimus > 202.5 && azimus < 247.5 ){
+			else if( azimus >= 203 && azimus <= 247 ){
 				news.setText("南西") ;
 			}
-			else if( azimus >= 247.5 && azimus <= 292.0 ){
+			else if( azimus >= 248 && azimus <= 292 ){
 				news.setText("西") ;
 			}
-			else if( azimus > 292.0 && azimus < 337.5 ){
+			else if( azimus >= 293 && azimus <= 337 ){
 				news.setText("北西") ;
 			}
 		}
