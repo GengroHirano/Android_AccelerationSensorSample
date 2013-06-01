@@ -81,7 +81,8 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 
 		if( gravity != null && geomagnetic != null ){
 			SensorManager.getRotationMatrix(rotationMatrix, I, gravity, geomagnetic) ;
-			//なんか調整が必要っぽい
+			//--------------------なんか調整が必要っぽい--------------------//
+			//背面カメラを下に地面に水平に、ポートレイト状態で持ったとき
 			SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, outRotation) ;
 			SensorManager.getOrientation(outRotation, attitude) ;
 
@@ -93,7 +94,7 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			 **/
 			double azimus = 0.0;
 			if(attitude[0] < 0){
-				azimus = Math.toDegrees(attitude[0]) + 360.0f ;
+				azimus = Math.toDegrees(attitude[0]) + 360 ;
 			}
 			else{
 				azimus = Math.toDegrees(attitude[0]) ;
@@ -107,6 +108,10 @@ public class AccelerationActivity extends Activity implements SensorEventListene
 			rollValue.setText(Integer.toString( (int)Math.toDegrees(currentAttitude[2]) )) ; //飛行機で言う主翼の先端 -180~180度まで
 			//詳しく載ってるttp://shitappaprogramer.seesaa.net/article/229118272.html
 
+//			Log.v("磁界", Float.toString(geomagnetic[0])) ;
+//			Log.i("磁界", Float.toString(geomagnetic[1])) ;
+//			Log.e("磁界", Float.toString(geomagnetic[2])) ;
+			
 			if( azimus >= 338 || azimus <= 22 ){
 				news.setText("北") ;
 			}
